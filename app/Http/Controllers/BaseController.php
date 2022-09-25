@@ -163,4 +163,10 @@ class BaseController extends Controller
 
         return view('laptops', compact('laptop_brands', 'laptop_models', 'processor_brands', 'processor_models', 'processor_generations', 'gpu_brands', 'gpu_models', 'gpu_memories'));
     }
+
+    public function basic()
+    {
+        return view('basic');
+        // return "home";
+    }
 }

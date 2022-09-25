@@ -15,9 +15,12 @@ use App\Http\Controllers\BaseController;
 |
 */
 
-Route::get('/', function () {
-    return '<h1>Laptop Survey</h1>';
-});
+// Route::get('/', function () {
+//     return '<h1>Laptop Survey</h1>';
+// });
+
+Route:: get('/', [BaseController::class, 'basic'])->name('basic');
+// Route:: post('/', [BaseController::class, 'basicSubmit'])->name('basic.submit');
 
 
 
