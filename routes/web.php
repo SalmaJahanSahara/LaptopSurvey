@@ -20,11 +20,14 @@ use App\Http\Controllers\BaseController;
 // });
 
 Route:: get('/', [BaseController::class, 'basic'])->name('basic');
-// Route:: post('/', [BaseController::class, 'basicSubmit'])->name('basic.submit');
+Route:: post('/basic-submit', [BaseController::class, 'basicSubmit'])->name('basic.submit');
+
+Route:: get('/index', [BaseController::class, 'index'])->name('index');
 
 
 
 Route:: get('/laptops', [BaseController::class, 'laptops'])->name('laptops');
+Route:: post('/laptops', [BaseController::class, 'laptopsSubmit'])->name('laptops.submit');
 
 Route:: get('/insert-laptop', [BaseController::class, 'insert'])->name('insert');
 Route:: post('/insert-laptop', [BaseController::class, 'insertSubmit'])->name('insert.submit');

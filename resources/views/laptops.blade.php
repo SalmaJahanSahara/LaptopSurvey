@@ -5,32 +5,40 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
-    <title>Document</title>
+    <title>Laptop List</title>
 </head>
 <body>
+    
+    @if (!session()->has('user_id'))
+        <script>window.location = "{{ route('basic') }}";</script>
+        <?php exit; ?>
+    @endif
+
+    <table width="100%"><tr><td><h5>&emsp;&emsp;&emsp;Hello, {{ strtoupper(session()->get('user_name')) }}. <a href="{{ route('basic') }}">Not you?</a></h5></td><td style="text-align:right">Page 3 of 3 &emsp;&emsp;&emsp;</td></tr></table>
 
 <h1><center>Laptop List</center></h1>
 @php $laptop_count=0; @endphp
-<form action="" method="post">
+<form action="{{route('laptops.submit')}}" method="post">
     {{@csrf_field()}}
 
     <div class="container">
     <table class="table table-striped table-hover" id="allProducts">
         <tr>
-            <th>Seial</th>
-            <th>Product Name</th>
+            <th>Serial</th>
+            <th>Laptop Name</th>
             <th>Processor</th>
             <th>Ram</th>
             <th>Storage</th>
             <th>Graphics</th>
             <th>Display</th>
             <th>Battery</th>
+            <th>Special Features</th>
             <th>Price</th>
         </tr>
-        @foreach($laptop_models as $laptop_model)
+        @foreach(json_decode($laptop_models) as $laptop_model)
             <tr>
                 <td>
-                    <input type="checkbox" name="selected_laptops" value="{{$laptop_model->id}}">
+                    <input type="checkbox" name="selected_laptops[]" value="{{$laptop_model->lm_id}}">
                     {{$laptop_count = $loop->iteration}}
                 </td>
 
@@ -50,16 +58,49 @@
                     @endif
                 </td>
 
-                <td>{{$laptop_model->g_brand .' '. $laptop_model->g_model .' '. $laptop_model->g_memory}}</td>
+                <td>{{$laptop_model->g_brand .' '. $laptop_model->g_model}}</td>
                 <td>{{$laptop_model->display_size .'" '. $laptop_model->display_quality}}</td>
                 <td>{{$laptop_model->battery}} WHr</td>
+                <td>
+                    @php
+                        
+                        $sf = json_decode($laptop_model->sf);
+                        $i = 1;
+                        if($sf != null)
+                        {
+                            foreach($sf as $s)
+                            { 
+                                if($i != 1)
+                                {
+                                    echo ", ";
+                                    
+                                }$i++;
+                                if($s == "KL"){echo '<p title="Keyboard Light" style="display:inline">';}
+                                if($s == "TD"){echo '<p title="Touch Display" style="display:inline">';}
+                                if($s == "360"){echo '<p title="360° Display" style="display:inline">';}
+                                if($s == "FP"){echo '<p title="Finger Print" style="display:inline">';}
+                                echo $s."</p>";
+                            }
+                        }
+                        else{echo "<p title='Sorry! There are no special features to show.' style='display:inline'>Not Available</p>";}
+                        
+                    @endphp
+                </td>
                 <td>{{$laptop_model->price}} taka</td>
             </tr>
         @endforeach
     </table>
+    
     <h6 align="right">Showing {{$laptop_count}} laptops out of {{$total_laptop}}</h6>
     
-    </div>
+@if ($laptop_count > 0)
+    <center><input class="btn btn-primary" type="submit" value="Submit"></center>
+@else
+<br><br><br>
+    <center><h5>Sorry! There are no laptops according to your choice. Please <a href="{{ route('filter') }}">go back</a> and try to remove some filters.</h5></center>
+@endif
+
+</div>
 </form>
 
 

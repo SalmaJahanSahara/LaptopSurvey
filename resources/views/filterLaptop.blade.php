@@ -14,15 +14,23 @@
     </style>
 </head>
 <body>
-    
+
+    @if (!session()->has('user_id'))
+        <script>window.location = "{{ route('basic') }}";</script>
+        <?php exit; ?>
+    @endif
+
+    <table width="100%"><tr><td><h5>&emsp;&emsp;&emsp;Hello, {{ strtoupper(session()->get('user_name')) }}. <a href="{{ route('basic') }}">Not you?</a></h5></td><td style="text-align:right">Page 2 of 3 &emsp;&emsp;&emsp;</td></tr></table>
+  
     <form action="{{route('filter.submit')}}" method="post">
     {{@csrf_field()}}
 
     <center>
-        <br><h3>Filter Laptop</h3><br>
+        <br><h3>Filter Laptop</h3>
+        <b style="color:green"># Optional. TRY to fill input fields as much as you can to get short-listed laptops.</b><br><br>
         <table class="table" style="width: 700px">
             <tr>
-                <td>Laptop Brand:</td>
+                <td><b style="color:green"># </b>Laptop Brand:</td>
                 <td colspan="2">
                     <select name="laptop_brand">
                         <option value="0">Select Laptop Brand Here</option>
@@ -35,7 +43,7 @@
             </tr>  
             <tr>    
 
-                <td>Processor:</td>
+                <td><b style="color:green"># </b>Processor:</td>
                 <td>
                     <select name="processor_brand">
                         <option value="0">Select Processor Here</option>
@@ -45,18 +53,27 @@
                     </select>
                 </td>
                 <td>
+                    @php $processor_brand = "INTEL"; @endphp
+                    
                     <select name="processor_model">
                         <option value="0">Select Processor Specification (Advanced)</option>
+                        <optgroup label="INTEL">
                         @foreach($processor_models as $processor_model)
+                            @if ($processor_brand != $processor_model->p_brand)
+                                </optgroup>
+                                <optgroup label="{{ $processor_model->p_brand }}">
+                                @php $processor_brand = $processor_model->p_brand; @endphp
+                            @endif
                             <option value="{{$processor_model->id}}">{{$processor_model->p_brand .' '. $processor_model->p_model}}</option>
                         @endforeach
+                    </optgroup>
                     </select>
                 </td>
 
             </tr>  
             <tr>     
 
-                <td>RAM:</td>
+                <td><b style="color:green"># </b>RAM:</td>
                 <td colspan="2">
                 <input type="checkbox" name="ram[]" value="4">4GB &emsp;
                 <input type="checkbox" name="ram[]" value="8">8GB &emsp;
@@ -67,7 +84,7 @@
             </tr>  
             <tr>     
 
-                <td>Storage:</td>
+                <td><b style="color:green"># </b>Storage:</td>
                 <td colspan="2">
                     <input type="radio" name="storage" value="none" checked>No Choice &emsp;
                     <input type="radio" name="storage" value="ssd">Only SSD &emsp;
@@ -78,28 +95,41 @@
             </tr>    
             <tr>    
                           
-                <td>Graphics:</td>
+                <td><b style="color:green"># </b>Graphics:</td>
                 <td>
-                    <select name="gpu">
-                        <option value="0">Select Graphics Here</option>
-                        @foreach($gpu_models as $gpu_model)
-                            <option value="{{$gpu_model->id}}">{{$gpu_model->g_brand .' '. $gpu_model->g_model}}</option>
+                    <select name="gpu_brand">
+                        <option value="0">Select GPU Brand</option>
+                        @foreach($gpu_brands as $gpu_brand)
+                            <option value="{{$gpu_brand->id}}">{{$gpu_brand->g_brand}}</option>
                         @endforeach
                     </select>
                 </td>
                 <td>
-                    <select name="gpu_memory">
+
+
+                    <select name="gpu">
                         <option value="0">Select Graphics Specification (Advanced)</option>
-                        @foreach($gpu_memories as $gpu_memory)
-                            <option value="{{$gpu_memory->id}}">{{$gpu_memory->g_memory}}</option>
+
+                        @php $gpu_brand = "INTEL"; @endphp
+                        <optgroup label="INTEL">
+                        @foreach($gpu_models as $gpu_model)
+                            @if ($gpu_brand != $gpu_model->g_brand)
+                                </optgroup>
+                                <optgroup label="{{ $gpu_model->g_brand }}">
+                                @php $gpu_brand = $gpu_model->g_brand; @endphp
+                            @endif
+                            <option value="{{$gpu_model->id}}">{{$gpu_model->g_brand .' '. $gpu_model->g_model}}</option>
                         @endforeach
+                        </optgroup>
                     </select>
+
+
                 </td>
 
             </tr>     
             <tr>    
                           
-                <td>Display:</td>
+                <td><b style="color:green"># </b>Display:</td>
                 <td>
                     <select name="disp_size">
                         <option value="0">Select Display Size Here</option>
@@ -121,10 +151,20 @@
                     </select>
                 </td>
 
-            </tr>      
+            </tr> 
+            <tr>     
+
+                <td><b style="color:green"># </b>Special Features:</td>
+                <td colspan="2">
+                    <input type="checkbox" name="sf[]" value="KL">Keyboard Light (KL) &emsp;
+                    <input type="checkbox" name="sf[]" value="FP">Finger Print (FP) &emsp;
+                    <input type="checkbox" name="sf[]" value="TD">Touch Display (TD) &emsp;
+                </td>
+
+            </tr>       
             <tr>    
                           
-                <td>Price Range:</td>
+                <td><b style="color:green"># </b>Price Range:</td>
                 <td>
                     <input type="number" name="min_price" placeHolder="Lowest Price">
                 </td>
